@@ -1,0 +1,83 @@
+import random
+Playing = True
+
+
+total_cash_file = "total_cash_count.txt"
+total_cash = 0
+
+def make_file():
+    with open(total_cash_file, 'w') as file:
+        file.write("0")
+
+user_name = input("Hello fellow merchant! What is your name? ")
+
+merchant = {"name": user_name, "pack_spots" : 5, "pack_filled": 0,
+            "inventory": []}
+
+def keep(item):
+     merchant['inventory'].append(item)
+
+
+def discard():
+     merchant["pack_filled"] = merchant["pack_filled"] - 1
+     merchant["pack_spots"] = merchant["pack_spots"] + 1
+
+def view_inventory():
+     print(f"\nYour backpack has {merchant['pack_filled']}/5 spots filled.")
+     print("The items include:")
+     for item in merchant["inventory"]:
+          print(f"- {item}")
+
+def shop():
+     print("Your backpack includes:")
+     for item in merchant["inventory"]:
+          print(f"- {item}")
+     choice = input("Which item would you like to sell? ").lower()
+     print(f"Good choice! You sold a {choice} for {items[choice]['value']}")
+
+
+
+items = {"plastic cap": {"name": "plastic cap", "description": "plastic bottle cap",
+                  "value": 1},
+         "seashell": {"name": "seashell", "description":
+                        "sparkly seashell","value": 5},
+         "pearl": {"name": "pearl", "description": "shiny pearl",
+                      "value": 15},
+         "diamond earring": {"name": "diamond earring", "description": "diamond incrusted earring",
+                  "value": 30}}
+
+rarity = ["plastic cap","plastic cap", "seashell", "seashell", "seashell",
+        "pearl","pearl", "pearl", "pearl", "diamond earring", "diamond earring"]
+
+
+def search():
+     print("\nsearching...")
+     found = random.choice(rarity)
+     merchant["pack_filled"] = merchant["pack_filled"] + 1
+     merchant["pack_spots"] = merchant["pack_spots"] - 1
+     print(f"You found a {items[found]['description']}!")
+     print(f"A {items[found]['name']} goes for about {items[found]['value']} dollars on these streets."
+           f"\nYou now have {merchant['pack_spots']} spots left in your bag.")
+     choice = input("Would you like to keep or discard it?(k or d)" )
+     if choice == "k":
+          keep(found)
+     elif choice == "d":
+          discard() 
+     else:
+          print("That is not an option. Please retry.")
+       
+
+while Playing:
+        print("\nChoose an action:")
+        print("1.Search beach\n2.Sell items\n3.view inventory\n4.quit")
+        choice = input("What would you like to do? ").lower()
+        if choice == "1":
+             search()
+        elif choice == "2":
+             shop()
+        elif choice == "3":
+             view_inventory()
+        elif choice == "4":
+             Playing = False
+        else:
+             "Invalid input. Please retry."
