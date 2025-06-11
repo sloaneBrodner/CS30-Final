@@ -11,22 +11,7 @@ def make_file():
 
 user_name = input("Hello fellow merchant! What is your name? ")
 
-merchant = {"name": user_name, "pack_spots" : 5, "pack_filled": 0,
-            "inventory": []}
-
-def keep(item):
-     merchant['inventory'].append(item)
-
-
-def discard():
-     merchant["pack_filled"] = merchant["pack_filled"] - 1
-     merchant["pack_spots"] = merchant["pack_spots"] + 1
-
-def view_inventory():
-     print(f"\nYour backpack has {merchant['pack_filled']}/5 spots filled.")
-     print("The items include:")
-     for item in merchant["inventory"]:
-          print(f"- {item}")
+merchant = {"name": user_name, "inventory": []}
 
 def shop():
      print("Your backpack includes:")
@@ -53,16 +38,14 @@ rarity = ["plastic cap","plastic cap", "seashell", "seashell", "seashell",
 def search():
      print("\nsearching...")
      found = random.choice(rarity)
-     merchant["pack_filled"] = merchant["pack_filled"] + 1
-     merchant["pack_spots"] = merchant["pack_spots"] - 1
      print(f"You found a {items[found]['description']}!")
      print(f"A {items[found]['name']} goes for about {items[found]['value']} dollars on these streets."
            f"\nYou now have {merchant['pack_spots']} spots left in your bag.")
      choice = input("Would you like to keep or discard it?(k or d)" )
      if choice == "k":
-          keep(found)
+          pass
      elif choice == "d":
-          discard() 
+          pass 
      else:
           print("That is not an option. Please retry.")
        
@@ -76,7 +59,7 @@ while Playing:
         elif choice == "2":
              shop()
         elif choice == "3":
-             view_inventory()
+             pass
         elif choice == "4":
              Playing = False
         else:
