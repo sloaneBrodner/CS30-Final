@@ -1,0 +1,199 @@
+###############################################################################
+# Title: Beach Day
+# Name: Sloane
+# Class: CS 30
+# Assignment: Final Project
+# Version:3.0
+# Date:6/13/2025
+###############################################################################
+'''
+   You will search a beach, sell items, buy upgrades. 
+   User will decide to keep or discard, then sell their items.
+'''
+###############################################################################
+# Imports and Global Variables------------------------------------------------- 
+import random
+Playing = True
+networth_goal = 30
+total_cash_file = "total_cash_count.txt"
+
+
+merchant = {"name": [], "pack_spots" : 5, "pack_filled": 0,
+            "inventory": [], "networth": 29, "level": 1}
+
+
+items = {"plastic cap": {"name": "plastic cap", "description": "plastic bottle cap",
+                  "value": 1},
+         "seashell": {"name": "seashell", "description":
+                        "sparkly seashell","value": 5},
+         "pearl": {"name": "pearl", "description": "shiny pearl",
+                      "value": 12},
+         "diamond earring": {"name": "diamond earring", "description": "diamond incrusted earring",
+                  "value": 20}} 
+
+
+items2 = {"seashell": {"name": "seashell", "description": "sparkly seashell","value": 5},        
+          "pearl": {"name": "pearl", "description": "shiny pearl","value": 12},
+          "diamond earring": {"name": "diamond earring", "description": "diamond incrusted earring","value": 20},
+          "small chest": {"name": "small chest", "description": "treasure chest","value": 32}}
+
+
+rarity = ["plastic cap","plastic cap", "seashell", "seashell", "seashell",
+        "pearl","pearl", "pearl", "pearl", "diamond earring", "diamond earring"]
+
+
+rarity2 = ["seashell", "seashell","pearl","pearl", "pearl", "pearl", "diamond earring", 
+           "diamond earring", "small chest", "small chest"]
+
+
+shop_tools = {"Metal Detector" : {"cost" : 50, 'items': items2, 
+     "rarity" : rarity2}} #unlocked after level 1
+
+
+# Functions -------------------------------------------------------------------
+
+
+def make_file(): #create external file for data saving
+    with open(total_cash_file, 'w') as file:
+        file.write("NMI(New Merchant Information Card)"
+                   f"\nMerchant name: {merchant['name']}"
+                   f"\nMerchant progress level: {merchant['level']}"
+                   f"\nTotal galleons: {merchant['networth']}")  
+
+
+def keep(item):
+     merchant['inventory'].append(item)
+
+
+def discard():
+     merchant["pack_filled"] = merchant["pack_filled"] - 1
+     merchant["pack_spots"] = merchant["pack_spots"] + 1
+
+
+def view_inventory(): #user can view items in their inventory
+     if merchant['pack_filled'] > 0:
+          print(f"\nYour backpack has {merchant['pack_filled']}/5 spots filled.")
+          print("The items include:")
+          for item in merchant["inventory"]:
+               print(f"- {item}")
+     else:
+          print("Your backpack is empty! Search the beach to find items.")
+
+
+def view_networth(): #user can view their money count
+     print(f"You have {merchant['networth']} galleons!")
+
+
+def shop(item_level): #User can sell their items 
+     print("Your backpack includes:")
+     for item in merchant["inventory"]:
+          print(f"- {item}") #only items in their bag are options
+     choice = input("Which item would you like to sell? ").lower()
+     if choice in merchant["inventory"]:
+          print(f"Good choice! You sold a {choice} for {item_level[choice]['value']} galleons.")
+          merchant["pack_filled"] = merchant["pack_filled"] - 1
+          merchant["pack_spots"] = merchant["pack_spots"] + 1
+          merchant['inventory'].remove(choice)
+          merchant['networth'] = merchant['networth'] + item_level[choice]['value']
+          print(f"You currently have {merchant['networth']} galleons.")
+     else:
+          print("That is an invalid option. Please retry.")
+
+
+def view_tool_shop(): #user can buy a metal detector to imrpove their search
+     print("The upgrades for sale right now include:")
+     print(f"- Metal detector 50 Galleons")
+     choice = input("Would you like to buy this item?(y or n) ")
+     if choice == "y" and merchant["networth"] >= 50:
+          merchant["networth"] = merchant["networth"] - 50 
+          print("You purchased a metal detector! Be on the lookout for some new, higher value items!")
+     elif choice == "y" and merchant["networth"] < 50:
+          print("You do not have enough galleons for this purchase."
+                "\nContinue to search the beach to find items to sell!")
+     elif choice == "n":
+          print("No purchase placed.")
+     else:
+          print("Invalid entry. Please try again.")
+
+
+def search(rare_level,item_level): #search the beach for items
+     if merchant["pack_spots"] > 0 and merchant["pack_spots"] <= 5:
+          print("\nsearching...")
+          found = random.choice(rare_level)
+          merchant["pack_filled"] = merchant["pack_filled"] + 1
+          merchant["pack_spots"] = merchant["pack_spots"] - 1
+          print(f"You found a {item_level[found]['description']}!")
+          print(f"A {item_level[found]['name']} goes for about {item_level[found]['value']} galleons on these streets."
+               f"\nYou now have {merchant['pack_spots']} spots left in your bag.")
+          choice = input("Would you like to keep or discard it?(k or d)" )
+          if choice == "k":
+               keep(found)
+          elif choice == "d":
+               discard() 
+          else:
+               print("That is not an option. Please retry.")
+     else:
+          print("Your backpack is full! Sell an item to make some more room.")
+
+
+def welcome():     #intro
+    user_name = input("Hello fellow merchant! What is your name? ") 
+    merchant["name"] = user_name
+    print(f"\nWelcome to the beach, {user_name}!" 
+           "\nYour objective is to search the beach, find treasures, and sell them for profit."
+           "\nYou can upgrade your tools to find bigger trinkets and make more money!"
+           "\nYour first goal is to make 30 galleons, good luck!")
+
+
+def level_1_main(rarity,items): #main code while loop
+     global rarity2, items2, Playing, networth_goal
+     while Playing:
+          if merchant['networth'] >= 30:
+               print(f"\nGood job! You reached the first goal of making 30 galleons,"
+                      "\nand you have unlocked the tools shop!")
+               networth_goal = networth_goal + 70
+               merchant['level'] = merchant['level'] + 1
+               while Playing:
+                    print("\nChoose an action:")
+                    print("1.Search Beach\n2.Sell items\n3.View Inventory\n4.View galleons\n5.View tool Shop \n6.Quit")       
+                    choice = input("What would you like to do? ")
+                    if choice == "1":
+                         search(rarity2, items2)
+                    elif choice == "2":
+                         shop(items2)
+                    elif choice == "3":
+                         view_inventory()
+                    elif choice == "4":
+                         view_networth()
+                    elif choice == "5":
+                         view_tool_shop()
+                    elif choice == "6":
+                         print("Your data is saved.")
+                         make_file()
+                         Playing = False
+                    else:
+                         print("Invalid input. Please retry.")
+          else:
+               print("\nChoose an action:")
+               print("1.Search Beach\n2.Sell items\n3.View Inventory\n4.View galleons\n5.Quit")       
+               choice = input("What would you like to do? ")
+               if choice == "1":
+                    search(rarity,items)
+               elif choice == "2":
+                    shop(items)
+               elif choice == "3":
+                    view_inventory()
+               elif choice == "4":
+                    view_networth()
+               elif choice == "5":
+                    print("Your data is saved.")
+                    make_file()
+                    Playing = False
+               else:
+                    print("Invalid input. Please retry.")
+
+
+# Main ------------------------------------------------------------------- 
+make_file() #make file 
+welcome() #intro
+level_1_main(rarity,items) #main code
